@@ -58,3 +58,24 @@ export const getReceipts = async (uid) => {
 
   return allReceipts;
 };
+
+export const updateReceipt = (
+  docId,
+  uid,
+  date,
+  locationName,
+  address,
+  items,
+  amount,
+  imageBucket
+) => {
+  setDoc(doc(db, RECEIPTS_COLLECTION, docId), {
+    uid,
+    date,
+    locationName,
+    address,
+    items,
+    amount,
+    imageBucket,
+  });
+};

@@ -89,19 +89,36 @@ export default function ExpenseDialog(props) {
     setIsSubmitting(true);
 
     try {
-      const bucket = await uploadImage(formFields.file, authUser.uuid);
-      await addReceipt(
-        authUser.uuid,
-        formFields.date,
-        formFields.locationName,
-        formFields.address,
-        formFields.items,
-        formFields.amount,
-        bucket
-      );
-      props.onSuccess(RECEIPTS_ENUM.add);
+      if (isEdit) {
+        if (formFields.fileName) {
+          await replaceImage(formFields.file, formFields.imageBucket);
+        }
+        await updateReceipt(
+          formFields.id,
+          authUser.uuid,
+          formFields.date,
+          formFields.locationName,
+          formFields.address,
+          formFields.items,
+          formFields.amount,
+          formFields.imageBucket
+        );
+      } else {
+        const bucket = await uploadImage(formFields.file, authUser.uuid);
+        await addReceipt(
+          authUser.uuid,
+          formFields.date,
+          formFields.locationName,
+          formFields.address,
+          formFields.items,
+          formFields.amount,
+          bucket
+        );
+      }
+
+      props.onSuccess(isEdit ? RECEIPTS_ENUM.edit : RECEIPTS_ENUM.add);
     } catch (error) {
-      props.onError(RECEIPTS_ENUM.add);
+      props.onError(isEdit ? RECEIPTS_ENUM.edit : RECEIPTS_ENUM.add);
     }
 
     closeDialog();
