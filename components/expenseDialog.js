@@ -89,7 +89,16 @@ export default function ExpenseDialog(props) {
     setIsSubmitting(true);
 
     try {
-      await uploadImage(formFields.file, authUser.uuid);
+      const bucket = await uploadImage(formFields.file, authUser.uuid);
+      await addReceipt(
+        authUser.uuid,
+        formFields.date,
+        formFields.locationName,
+        formFields.address,
+        formFields.items,
+        formFields.amount,
+        bucket
+      );
       props.onSuccess(RECEIPTS_ENUM.add);
     } catch (error) {
       props.onError(RECEIPTS_ENUM.add);
