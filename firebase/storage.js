@@ -18,3 +18,7 @@ export const uploadImage = async (image, uid) => {
 
   return bucket;
 };
+
+export const getDownloadURL = async (bucket) => {
+  return await getStorageDownloadURL(ref(storage, bucket));
+};

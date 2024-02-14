@@ -60,6 +60,7 @@ export default function Dashboard() {
   const [isLoadingReceipts, setIsLoadingReceipts] = useState(true);
   const [deleteReceiptId, setDeleteReceiptId] = useState("");
   const [deleteReceiptImageBucket, setDeleteReceiptImageBucket] = useState("");
+  const [receipts, setReceipts] = useState([]);
   const [updateReceipt, setUpdateReceipt] = useState({});
 
   // State involved in snackbar
@@ -82,6 +83,13 @@ export default function Dashboard() {
       router.push("/");
     }
   }, [authUser, isLoading]);
+
+  // Get Receipts once user is logged in
+  useEffect(async () => {
+    if (authUser) {
+      setReceipts(await getReceipts(authUser.uuid));
+    }
+  }, [authUser]);
 
   // For all of the onClick functions, update the action and fields for updating
 
@@ -156,6 +164,17 @@ export default function Dashboard() {
           </IconButton>
         </Stack>
       </Container>
+
+      {receipts?.map((receipt) => (
+        <div key={receipt.id}>
+          <Divider light />
+          <ReceiptRow
+            receipt={receipt}
+            onEdit={() => onUpdate(receipt)}
+            onDelete={() => onClickDelete(receipt.id, receipt.imageBucket)}
+          />
+        </div>
+      ))}
       <ExpenseDialog
         edit={updateReceipt}
         showDialog={
