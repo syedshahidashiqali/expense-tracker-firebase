@@ -35,28 +35,31 @@ export const addReceipt = async (
   });
 };
 
-export const getReceipts = async (uid) => {
-  const receipts = query(
+export const getReceipts = async (uid, setReceipts, setIsLoadingReciepts) => {
+  const receiptsQuery = query(
     collection(db, RECEIPTS_COLLECTION),
     where("uid", "==", uid),
     orderBy("date", "desc")
   );
 
-  const querySnapshot = await getDocs(receipts);
+  const unsubscribe = onSnapshot(receiptsQuery, async (snapshot) => {
+    let allReceipts = [];
 
-  let allReceipts = [];
+    for (const documentSnapshot of snapshot.docs) {
+      const receipt = documentSnapshot.data();
+      await allReceipts.push({
+        ...receipt,
+        date: receipt["date"].toDate(),
+        id: documentSnapshot.id,
+        imageUrl: await getDownloadURL(receipt["imageBucket"]),
+      });
+    }
 
-  for (const documentSnapshot of querySnapshot.docs) {
-    const receipt = documentSnapshot.data();
-    await allReceipts.push({
-      ...receipt,
-      date: receipt["date"].toDate(),
-      id: documentSnapshot.id,
-      imageUrl: await getDownloadURL(receipt["imageBucket"]),
-    });
-  }
+    setReceipts(allReceipts);
+    setIsLoadingReciepts(false);
+  });
 
-  return allReceipts;
+  return unsubscribe;
 };
 
 export const updateReceipt = (
