@@ -82,3 +82,7 @@ export const updateReceipt = (
     imageBucket,
   });
 };
+
+export const deleteReceipt = (id) => {
+  deleteDoc(doc(db, RECEIPTS_COLLECTION, id));
+};

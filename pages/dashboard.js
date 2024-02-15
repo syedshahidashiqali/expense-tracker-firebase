@@ -120,6 +120,20 @@ export default function Dashboard() {
     setDeleteReceiptId("");
   };
 
+  const onDelete = async () => {
+    let isSucceed = true;
+
+    try {
+      await deleteReceipt(deleteReceiptId);
+      await deleteImage(deleteReceiptImageBucket);
+    } catch (error) {
+      isSucceed = false;
+    }
+
+    resetDelete();
+    onResult(RECEIPTS_ENUM.delete, isSucceed);
+  };
+
   return !authUser ? (
     <CircularProgress
       color="inherit"
@@ -203,7 +217,12 @@ export default function Dashboard() {
           <Button color="secondary" variant="outlined" onClick={resetDelete}>
             Cancel
           </Button>
-          <Button color="secondary" variant="contained" autoFocus>
+          <Button
+            color="secondary"
+            variant="contained"
+            autoFocus
+            onClick={onDelete}
+          >
             Delete
           </Button>
         </DialogActions>

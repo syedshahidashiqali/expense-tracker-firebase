@@ -26,3 +26,7 @@ export const getDownloadURL = async (bucket) => {
 export const replaceImage = async (image, bucket) => {
   await uploadBytes(ref(storage, bucket), image);
 };
+
+export const deleteImage = (bucket) => {
+  deleteObject(ref(storage, bucket));
+};
